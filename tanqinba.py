@@ -3,6 +3,7 @@ from bs4 import BeautifulSoup
 from urllib import request
 import urllib
 
+# 抓取上传者
 def get_person(url):
     req = requests.get(url)
     html = req.text
@@ -10,18 +11,21 @@ def get_person(url):
     text = bf.find_all('div', class_='author_text')
     person = text[0].find('p').text
     return person
+
+# 通过关键字获取网址
 def get_url_by_key(key_word):
     req = requests.get('http://www.tan8.com/codeindex.php?d=web&c=weixin&m=search_list&type=1&keyword={}'.format(key_word))
     html = req.text
     bf = BeautifulSoup(html, 'html.parser')
     text = bf.find_all('a')
+    # 名字和网址做成字典
     yp_name_url = {}
     for each in text:
         u = each.get('href')
         yp_name_url[each.text] = u
     return yp_name_url
 
-
+# 抓取乐谱名字
 def get_title(url):
     req = requests.get(url=url)                                          # 爬取网站源码
     req_text = req.text                                                  # 转为文本
@@ -29,8 +33,8 @@ def get_title(url):
     text = bf.find_all('h3', class_='content_title_1113')
     return text[0].get_text()
 
-
-def get_replace(string, pos, c):                                         # 替换指定位置的字符串
+# 替换指定位置的字符串
+def get_replace(string, pos, c):                                         
     '''string: 被处理的字符串  pos: 索引  c: 索引处被替换的'''
     list = []
     for s in string:
@@ -38,7 +42,7 @@ def get_replace(string, pos, c):                                         # 替�
     list[pos] = str(c)
     return ''.join(list)
 
-
+# 下载
 def download(yp_url=''):
     if yp_url == '':
         id = input('\n输入乐谱ID: ')
@@ -94,23 +98,24 @@ if __name__ == '__main__':
                   '\t输入 0: 退出 \n'
                   '请输入: ')
         if i == '1':
-            w = download()
-            if w == 'end':
-                pass
-            elif w == 'url wrong':
-                continue
-            elif w == 'path wrong':
-                continue
+            w = download()  # 获取返回值
+            if w == 'end':  # 顺利完成
+                pass  # 从循环头开始
+            elif w == 'url wrong':  # 网址错误(乐谱id错误)
+                continue  # 从循环头开始
+            elif w == 'path wrong':  # 路径错误
+                continue  # 从循环头开始
         elif i == '2':
             key_word = input('请输入搜索关键词: ')
             dis = get_url_by_key(key_word=key_word)
             url_list = []
             n = 0
+            # 输出序号和搜索结果
             for name, url in dis.items():
                 n = n + 1
                 url_list.append(url)
-
                 print(str(n) + '. ' + name)
+            # 判断是否有结果
             if url_list:
                 num = input('请输入你需要的乐谱的序号: ')
                 url = url_list[int(num)-1]
