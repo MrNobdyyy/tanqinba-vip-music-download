@@ -14,7 +14,8 @@ def get_person(url):
 
 # 通过关键字获取网址
 def get_url_by_key(key_word):
-    req = requests.get('http://www.tan8.com/codeindex.php?d=web&c=weixin&m=search_list&type=1&keyword={}'.format(key_word))
+    req = requests.get('http://www.tan8.com/codeindex.php?d=web&c=weixin&m=search_list&type=1&keyword={}'
+                       .format(key_word.replace(' ', '+')))  # 因为网址不能包含空格
     html = req.text
     bf = BeautifulSoup(html, 'html.parser')
     text = bf.find_all('a')
@@ -46,7 +47,7 @@ def get_replace(string, pos, c):
 def download(yp_url=''):
     if yp_url == '':
         id = input('\n输入乐谱ID: ')
-        url = 'http://www.tan8.com/codeindex.php?d=web&c=weixin&m=piano&id={}&isalbum=0&sharepage=1&uid=2632107'.format(id)
+        url = 'http://www.tan8.com/codeindex.php?d=web&c=weixin&m=piano&id={}'.format(id)
     else:
         url = yp_url
 
